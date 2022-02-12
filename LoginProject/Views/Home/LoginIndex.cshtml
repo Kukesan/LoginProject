@@ -1,0 +1,61 @@
+﻿@model LoginProject.Models.LoginModel
+
+@{
+    ViewBag.Title = "Ajax Login form";
+}
+
+@using (Html.BeginForm("LoginIndex", "Home", FormMethod.Post, new { @Id = "formlogin" }))
+{
+    <div style="font-weight:bold; font-size:16px; color:red;" id="divmessage"></div>
+    <div>
+        <h2>User Registration</h2>
+        <div class="row">
+            <div class="form-group col-6">
+                <lable for="loginid">Login Id</lable>
+                @Html.TextBoxFor(m => m.LoginId, new { @class = "form-control", @placeholder = "Enter login id" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-6">
+                <lable for="loginid">Password</lable>
+                @Html.PasswordFor(m => m.Password, new { @class = "form-control", @placeholder = "Enter password" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-12">
+                <input type="button" value="Login" onclick="javascript: UserLoginValudation();" id="btnLogin" />
+            </div>
+        </div>
+    </div>
+}
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+    var UserLoginValudation = function () {
+        //To capture the form data
+        var formData = new FormData();
+        var formcontroldata = $("#formlogin").serializeArray();
+        $.each(formcontroldata, function (i, field) {
+            formData.append(field.name, field.value);
+        });
+        $("#btnLogin").val("Please wait..");
+        //To make the ajax request
+        $.ajax({
+            url: $("#formlogin").attr('action'),
+            type: $("#formlogin").attr('method'),
+            data: formData,
+            contentType: false, // Not to set any content header
+            processData: false, // Not to process data
+            dataType: 'json',
+            cache: false,
+            success: function (result) {
+                if (result.status == 0) {
+                    $('#divmessage').prop('style', 'color:red');
+                } else {
+                    $('#divmessage').prop('style', 'color: green');
+                }
+                $("#btnLogin").val("Login");
+                $("#divmessage").html(result.message);
+            }
+        });
+    };
+</script>
